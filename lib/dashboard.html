@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Library Management System - Dashboard">
+    <title>Dashboard | Smart Library Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-container">
+    <!-- ======== SIDEBAR ======== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-book-reader"></i>
+            <div><h2>LibraryMS</h2><span>Management System</span></div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            <li><a href="#" data-section="books"><i class="fas fa-book"></i><span>Browse Books</span></a></li>
+            <li class="admin-only"><a href="#" data-section="students"><i class="fas fa-user-graduate"></i><span>Students</span></a></li>
+            <li class="admin-only"><a href="#" data-section="issue"><i class="fas fa-hand-holding"></i><span>Issue Book</span></a></li>
+            <li class="admin-only"><a href="#" data-section="returns"><i class="fas fa-undo-alt"></i><span>Return Book</span></a></li>
+            <li class="admin-only"><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i><span>Reports</span></a></li>
+            <li class="student-only"><a href="#" data-section="mybooks"><i class="fas fa-bookmark"></i><span>My Books</span></a></li>
+            <li class="student-only"><a href="#" data-section="profile"><i class="fas fa-user-circle"></i><span>My Profile</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatarSidebar">A</div>
+                <div class="user-details">
+                    <span class="user-name" id="sidebarUserName">Admin</span>
+                    <span class="user-role" id="sidebarUserRole">Administrator</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+        </div>
+    </aside>
+
+    <!-- ======== MAIN CONTENT ======== -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search books, students..." id="globalSearch"></div>
+            <div class="topbar-right">
+                <button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fas fa-moon"></i></button>
+                <button class="notif-btn" id="notifBtn" title="Notifications"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge">0</span></button>
+            </div>
+        </header>
+
+        <!-- ======== DASHBOARD SECTION ======== -->
+        <section id="sec-dashboard" class="content-section active">
+            <div class="section-header"><h2>Dashboard</h2><p>Welcome back! Here's your library overview.</p></div>
+            <div class="stats-grid">
+                <div class="stat-card" style="--accent:#6366f1"><div class="stat-icon"><i class="fas fa-book"></i></div><div class="stat-info"><h3 id="statTotalBooks">0</h3><p>Total Books</p></div></div>
+                <div class="stat-card" style="--accent:#3b82f6"><div class="stat-icon"><i class="fas fa-book-open"></i></div><div class="stat-info"><h3 id="statIssuedBooks">0</h3><p>Issued Books</p></div></div>
+                <div class="stat-card" style="--accent:#10b981"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3 id="statAvailableBooks">0</h3><p>Available Books</p></div></div>
+                <div class="stat-card" style="--accent:#f59e0b"><div class="stat-icon"><i class="fas fa-user-graduate"></i></div><div class="stat-info"><h3 id="statTotalStudents">0</h3><p>Total Students</p></div></div>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card"><h4><i class="fas fa-chart-pie"></i> Books by Category</h4><canvas id="categoryChart"></canvas></div>
+                <div class="chart-card"><h4><i class="fas fa-chart-line"></i> Monthly Activity</h4><canvas id="activityChart"></canvas></div>
+            </div>
+            <div class="card"><h4><i class="fas fa-clock"></i> Recent Activities</h4><div id="recentActivities" class="activity-list"></div></div>
+        </section>
+
+        <!-- ======== BOOKS SECTION ======== -->
+        <section id="sec-books" class="content-section">
+            <div class="section-header"><h2>Book Management</h2><button class="btn btn-primary admin-only" id="addBookBtn"><i class="fas fa-plus"></i> Add Book</button></div>
+            <div class="filter-bar">
+                <input type="text" id="bookSearch" placeholder="Search by name, author...">
+                <select id="bookCategoryFilter"><option value="">All Categories</option></select>
+                <select id="bookStatusFilter"><option value="">All Status</option><option value="Available">Available</option><option value="Issued">Issued</option><option value="Out of Stock">Out of Stock</option></select>
+            </div>
+            <div class="table-container">
+                <table class="data-table"><thead><tr><th>ID</th><th>Book Name</th><th>Author</th><th>Publisher</th><th>Category</th><th>Qty</th><th>Avail</th><th>Status</th><th>Actions</th></tr></thead><tbody id="booksTableBody"></tbody></table>
+            </div>
+        </section>
+
+        <!-- ======== STUDENTS SECTION ======== -->
+        <section id="sec-students" class="content-section">
+            <div class="section-header"><h2>Student Management</h2><button class="btn btn-primary" id="addStudentBtn"><i class="fas fa-plus"></i> Add Student</button></div>
+            <div class="filter-bar">
+                <input type="text" id="studentSearch" placeholder="Search by name, email...">
+                <select id="studentDeptFilter"><option value="">All Departments</option></select>
+            </div>
+            <div class="table-container">
+                <table class="data-table"><thead><tr><th>ID</th><th>Student Name</th><th>Department</th><th>Email</th><th>Username</th><th>Phone</th><th>Actions</th></tr></thead><tbody id="studentsTableBody"></tbody></table>
+            </div>
+        </section>
+
+        <!-- ======== ISSUE BOOK SECTION ======== -->
+        <section id="sec-issue" class="content-section">
+            <div class="section-header"><h2>Issue Book</h2><p>Issue books to registered students.</p></div>
+            <div class="card" style="max-width:600px">
+                <form id="issueForm">
+                    <div class="form-group"><label>Student</label><select id="issueStudent" required><option value="">Select Student</option></select></div>
+                    <div class="form-group"><label>Book</label><select id="issueBook" required><option value="">Select Book</option></select></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Issue Date</label><input type="date" id="issueDate" required></div>
+                        <div class="form-group"><label>Due Date</label><input type="date" id="issueDueDate" required></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Issue Book</button>
+                </form>
+            </div>
+            <div style="margin-top:24px"><h4 style="margin-bottom:16px">Currently Issued Books</h4>
+                <div class="table-container"><table class="data-table"><thead><tr><th>Issue ID</th><th>Student</th><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody id="issuedTableBody"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- ======== RETURN BOOK SECTION ======== -->
+        <section id="sec-returns" class="content-section">
+            <div class="section-header"><h2>Return Book</h2><p>Process book returns and manage overdue books.</p></div>
+            <div class="filter-bar"><input type="text" id="returnSearch" placeholder="Search by student or book name..."></div>
+            <div class="table-container">
+                <table class="data-table"><thead><tr><th>Issue ID</th><th>Student</th><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="returnTableBody"></tbody></table>
+            </div>
+        </section>
+
+        <!-- ======== REPORTS SECTION ======== -->
+        <section id="sec-reports" class="content-section">
+            <div class="section-header"><h2>Reports</h2><p>Generate and view library reports.</p></div>
+            <div class="report-grid">
+                <div class="report-card" data-report="issued"><div class="report-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fas fa-book-open"></i></div><h4>Issued Books Report</h4><p>View all currently issued books with student details.</p></div>
+                <div class="report-card" data-report="available"><div class="report-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-check-circle"></i></div><h4>Available Books Report</h4><p>View all books currently available in the library.</p></div>
+                <div class="report-card" data-report="overdue"><div class="report-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fas fa-exclamation-triangle"></i></div><h4>Overdue Books Report</h4><p>View all overdue books that need attention.</p></div>
+                <div class="report-card" data-report="student"><div class="report-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-user-graduate"></i></div><h4>Student Activity Report</h4><p>View borrowing history for each student.</p></div>
+            </div>
+            <div id="reportOutput" class="card" style="display:none"><div class="section-header"><h4 id="reportTitle"></h4><button class="btn btn-sm btn-secondary" id="reportPrintBtn"><i class="fas fa-print"></i> Print</button></div><div id="reportContent"></div></div>
+        </section>
+
+        <!-- ======== MY BOOKS SECTION (Student Only) ======== -->
+        <section id="sec-mybooks" class="content-section">
+            <div class="section-header"><h2>My Issued Books</h2><p>Books currently borrowed by you.</p></div>
+            <div class="stats-grid" style="margin-bottom:24px">
+                <div class="stat-card" style="--accent:#3b82f6"><div class="stat-icon"><i class="fas fa-book-open"></i></div><div class="stat-info"><h3 id="myIssuedCount">0</h3><p>Currently Borrowed</p></div></div>
+                <div class="stat-card" style="--accent:#ef4444"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-info"><h3 id="myOverdueCount">0</h3><p>Overdue</p></div></div>
+                <div class="stat-card" style="--accent:#10b981"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3 id="myReturnedCount">0</h3><p>Total Returned</p></div></div>
+            </div>
+            <div class="table-container">
+                <table class="data-table"><thead><tr><th>Book Name</th><th>Author</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody id="myBooksTableBody"></tbody></table>
+            </div>
+        </section>
+
+        <!-- ======== MY PROFILE SECTION (Student Only) ======== -->
+        <section id="sec-profile" class="content-section">
+            <div class="section-header"><h2>My Profile</h2><p>Your personal information.</p></div>
+            <div class="card" style="max-width:550px">
+                <div style="text-align:center;margin-bottom:24px">
+                    <div class="user-avatar" id="profileAvatar" style="width:80px;height:80px;font-size:32px;margin:0 auto 12px;border-radius:50%">S</div>
+                    <h3 id="profileName" style="font-size:20px">Student Name</h3>
+                    <p id="profileDept" style="color:var(--text-secondary)">Department</p>
+                </div>
+                <div style="display:grid;gap:16px">
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg-main);border-radius:10px"><i class="fas fa-envelope" style="color:var(--primary);width:20px"></i><div><small style="color:var(--text-secondary)">Email</small><p id="profileEmail" style="font-weight:500">-</p></div></div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg-main);border-radius:10px"><i class="fas fa-phone" style="color:var(--success);width:20px"></i><div><small style="color:var(--text-secondary)">Phone</small><p id="profilePhone" style="font-weight:500">-</p></div></div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg-main);border-radius:10px"><i class="fas fa-id-card" style="color:var(--warning);width:20px"></i><div><small style="color:var(--text-secondary)">Student ID</small><p id="profileId" style="font-weight:500">-</p></div></div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg-main);border-radius:10px"><i class="fas fa-calendar" style="color:var(--info);width:20px"></i><div><small style="color:var(--text-secondary)">Registered</small><p id="profileDate" style="font-weight:500">-</p></div></div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- ======== MODALS ======== -->
+<!-- Book Modal -->
+<div class="modal-overlay" id="bookModal">
+    <div class="modal-box">
+        <div class="modal-header"><h3 id="bookModalTitle">Add Book</h3><button class="modal-close" onclick="closeModal('bookModal')">&times;</button></div>
+        <div class="modal-body">
+            <form id="bookForm">
+                <input type="hidden" id="bookEditId">
+                <div class="form-group"><label>Book Name</label><input type="text" id="bookName" required placeholder="Enter book name"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Author</label><input type="text" id="bookAuthor" required placeholder="Author name"></div>
+                    <div class="form-group"><label>Publisher</label><input type="text" id="bookPublisher" placeholder="Publisher name"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Category</label>
+                        <select id="bookCategory" required>
+                            <option value="">Select Category</option>
+                            <option>Programming</option><option>Database</option><option>Networks</option>
+                            <option>AI/ML</option><option>Operating Systems</option><option>Web Development</option>
+                            <option>Software Engineering</option><option>Electronics</option><option>Mathematics</option><option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Quantity</label><input type="number" id="bookQuantity" required min="1" value="1"></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('bookModal')">Cancel</button><button class="btn btn-primary" id="bookSaveBtn">Save Book</button></div>
+    </div>
+</div>
+
+<!-- Student Modal -->
+<div class="modal-overlay" id="studentModal">
+    <div class="modal-box">
+        <div class="modal-header"><h3 id="studentModalTitle">Add Student</h3><button class="modal-close" onclick="closeModal('studentModal')">&times;</button></div>
+        <div class="modal-body">
+            <form id="studentForm">
+                <input type="hidden" id="studentEditId">
+                <div class="form-group"><label>Student Name</label><input type="text" id="studentName" required placeholder="Full name"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Department</label>
+                        <select id="studentDepartment" required>
+                            <option value="">Select Department</option>
+                            <option>Computer Science</option><option>Information Technology</option><option>Electronics</option>
+                            <option>Electrical</option><option>Mechanical</option><option>Civil</option><option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Phone</label><input type="tel" id="studentPhone" placeholder="Phone number"></div>
+                </div>
+                <div class="form-group"><label>Email</label><input type="email" id="studentEmail" required placeholder="Email address"></div>
+                <hr style="border:none;border-top:1px solid var(--border);margin:16px 0 8px">
+                <p style="font-size:13px;font-weight:600;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:6px"><i class="fas fa-key"></i> Login Credentials</p>
+                <div class="form-row">
+                    <div class="form-group"><label>Username <span style="color:var(--danger)">*</span></label><input type="text" id="studentUsername" required placeholder="Login username" autocomplete="off"></div>
+                    <div class="form-group"><label>Password <span style="color:var(--danger)">*</span></label><input type="password" id="studentPassword" required placeholder="Login password" autocomplete="new-password"></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('studentModal')">Cancel</button><button class="btn btn-primary" id="studentSaveBtn">Save Student</button></div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/books.js"></script>
+<script src="js/students.js"></script>
+<script src="js/issue.js"></script>
+<script src="js/returns.js"></script>
+<script src="js/reports.js"></script>
+</body>
+</html>

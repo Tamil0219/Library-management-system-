@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Library Management System - Digital library management for colleges">
+    <title>Login | Smart Library Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="logo">
+                <i class="fas fa-book-reader"></i>
+                <h1>LibraryMS</h1>
+                <p>Smart Library Management System</p>
+            </div>
+
+            <div class="role-tabs">
+                <button class="role-tab active" data-role="Admin" id="tabAdmin">
+                    <i class="fas fa-user-shield"></i> Admin
+                </button>
+                <button class="role-tab" data-role="Student" id="tabStudent">
+                    <i class="fas fa-user-graduate"></i> Student
+                </button>
+            </div>
+
+            <div class="login-error" id="loginError">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">Invalid credentials</span>
+            </div>
+
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <div class="demo-creds">
+                <p>Admin: <code>admin / admin123</code></p>
+                <p style="margin-top:4px">Student: <code>rahul / rahul123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
